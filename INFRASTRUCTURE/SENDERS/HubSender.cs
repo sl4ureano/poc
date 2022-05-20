@@ -1,8 +1,5 @@
 ﻿using INFRASTRUCTURE.Consumer;
 using INFRASTRUCTURE.rabbitMQ;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace INFRASTRUCTURE.CONSUMERS
 {
@@ -16,7 +13,7 @@ namespace INFRASTRUCTURE.CONSUMERS
 
         public void publishMSG(object msg)
         {
-            this.sender.SendObj("HubTwo", "ha.save.cotacao", msg,true);
+            this.sender.SendObj("HubOne", "ha.save.cotacao.processada", msg,true);
         }
 
 
