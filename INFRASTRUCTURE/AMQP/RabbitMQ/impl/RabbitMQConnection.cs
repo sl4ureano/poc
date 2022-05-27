@@ -41,6 +41,13 @@ namespace INFRASTRUCTURE.rabbitMQ.impl
             return (connection, channel);
         }
 
+        public (IConnection, IModel) ConnectExchange(string connectionName, string ExchangeName, string type, bool isDurable)
+        {
+            var connection = ConConnect(connectionName);
+            var channel = ExchangeDeclare(connection, ExchangeName, type, isDurable);
+            return (connection, channel);
+        }
+
         public IModel QueueDeclare(IConnection connection, string queueName, bool isDurable)
         {
             IModel channel;
@@ -63,6 +70,34 @@ namespace INFRASTRUCTURE.rabbitMQ.impl
             catch (Exception e)
             {
                 Log.Error(e, $"Nao foi possivel declarar queue. queueName: {queueName}. Erro: {e.Message}");
+                throw;
+            }
+            return channel;
+        }
+
+
+        public IModel ExchangeDeclare(IConnection connection, string exchangeName, string type, bool isDurable)
+        {
+            IModel channel;
+            try
+            {
+                channel = connection.CreateModel();
+
+                channel.ExchangeDeclare(
+                    exchange: exchangeName,
+                    durable: isDurable,
+                    type: type,
+                    autoDelete: false,
+                    arguments: null
+                );
+
+                channel.BasicQos(0, 1, false);
+
+                Log.Information($"Exchange declarada. queueName: '{exchangeName}'");
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, $"Nao foi possivel declarar Exchange. ExchangeName: {exchangeName}. Erro: {e.Message}");
                 throw;
             }
             return channel;
